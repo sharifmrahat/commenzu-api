@@ -1,9 +1,10 @@
 import app from "./app";
+import config from "./config";
 
-async function main() {
-  app.listen(5000, () => {
-    console.log(`Server is running on port: 5000`);
+async function bootstrap() {
+  app.listen(config.PORT, () => {
+    console.log(`Server is running on port: ${config.PORT}`);
   });
 }
 
-main();
+bootstrap();
