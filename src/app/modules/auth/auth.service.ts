@@ -1,8 +1,8 @@
 import httpStatus from "http-status";
 import bcrypt from "bcrypt";
 import { ApiError, JwtHelpers, prismaClient } from "../../../utils";
-import { User } from "../../../generated/prisma";
 import config from "../../../config";
+import { User } from "@prisma/client";
 
 const login = async (payload: { email: string; password: string }) => {
   const userExist = await prismaClient.user.findUnique({
