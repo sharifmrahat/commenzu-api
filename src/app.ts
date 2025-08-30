@@ -1,6 +1,7 @@
 import cors from "cors";
 import express from "express";
 import httpStatus from "http-status";
+import globalErrorHandler from "./middlewares/global-error-handler";
 
 const app = express();
 
@@ -14,5 +15,8 @@ app.get("/", (req, res) => {
     message: `App endpoint is running successfully`,
   });
 });
+
+//* Global Error Handler
+app.use(globalErrorHandler);
 
 export default app;
