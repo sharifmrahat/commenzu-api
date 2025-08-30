@@ -2,6 +2,7 @@ import cors from "cors";
 import express, { NextFunction, Request, Response } from "express";
 import httpStatus from "http-status";
 import { globalErrorHandler, responseData } from "./utils";
+import { AppRouter } from "./routes";
 
 const app = express();
 
@@ -15,6 +16,9 @@ app.get("/", (req, res) => {
     message: `App endpoint is running successfully`,
   });
 });
+
+//* Default Routes
+app.use("/api/v1", AppRouter);
 
 //* Global Error Handler
 app.use(globalErrorHandler);
