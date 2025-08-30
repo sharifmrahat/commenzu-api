@@ -1,12 +1,10 @@
 import { ErrorRequestHandler, NextFunction, Request, Response } from "express";
 
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
-import { IGenericErrorMessage } from "../interfaces/error";
-import handleValidationError from "../utils/error-handlers/handle-validation-error";
-import handleClientError from "../utils/error-handlers/handle-client-error";
-import ApiError from "../utils/error-handlers/api-error";
+import { IGenericErrorMessage } from "../../interfaces/error";
+import { ApiError, handleValidationError, handleClientError } from "./index";
 
-const globalErrorHandler: ErrorRequestHandler = (
+export const globalErrorHandler: ErrorRequestHandler = (
   error,
   req: Request,
   res: Response,
@@ -56,5 +54,3 @@ const globalErrorHandler: ErrorRequestHandler = (
     stack: error?.stack,
   });
 };
-
-export default globalErrorHandler;

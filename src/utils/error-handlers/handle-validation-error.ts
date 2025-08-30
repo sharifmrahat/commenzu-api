@@ -1,7 +1,7 @@
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import { IGenericErrorResponse } from "../../interfaces/error";
 
-const handleValidationError = (
+export const handleValidationError = (
   error: PrismaClientKnownRequestError
 ): IGenericErrorResponse => {
   const errors = [
@@ -17,5 +17,3 @@ const handleValidationError = (
     errorMessages: errors,
   };
 };
-
-export default handleValidationError;

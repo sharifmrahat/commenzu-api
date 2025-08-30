@@ -22,6 +22,9 @@ model User {
   password String
   role     UserRole @default(User)
 
+  imageId  String?
+  ImageUrl String?
+
   comments  Comment[]
   reactions Reaction[]
   Post      Post[]

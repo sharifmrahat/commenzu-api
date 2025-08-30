@@ -10,7 +10,7 @@ type IData<T> = {
   meta?: Record<string, unknown>;
 };
 
-const responseData = <T>(data: IData<T>, res: Response) => {
+export const responseData = <T>(data: IData<T>, res: Response) => {
   const status = data.status ?? true;
   const statusCode = data.statusCode ?? httpstatus.OK;
 
@@ -25,5 +25,3 @@ const responseData = <T>(data: IData<T>, res: Response) => {
 
   return res.status(statusCode).json(response);
 };
-
-export default responseData;
