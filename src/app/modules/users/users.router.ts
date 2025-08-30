@@ -12,6 +12,14 @@ router
   .get(validateRole(UserRole.Admin), UserController.findAllUsers);
 
 router
+  .route("/:id")
+  .get(
+    validateRole(UserRole.Admin, UserRole.Moderator),
+    UserController.findOneUser
+  )
+  .delete(validateRole(UserRole.Admin), UserController.deleteUser);
+
+router
   .route("/profile")
   .get(
     validateRole(UserRole.Admin, UserRole.Moderator, UserRole.User),
@@ -22,13 +30,5 @@ router
     validateRequest(UserValidation.updateProfileZodSchema),
     UserController.updateProfile
   );
-
-router
-  .route("/:id")
-  .get(
-    validateRole(UserRole.Admin, UserRole.Moderator),
-    UserController.findOneUser
-  )
-  .delete(validateRole(UserRole.Admin), UserController.deleteUser);
 
 export const UserRouter = router;
