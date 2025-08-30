@@ -14,3 +14,109 @@ datasource db {
   url       = env("DATABASE_URL")
   directUrl = env("DIRECT_URL") //* For migrations
 }
+
+model User {
+  id       String   @id @default(uuid())
+  name     String
+  email    String   @unique
+  password String
+  role     UserRole @default(User)
+
+  comments  Comment[]
+  reactions Reaction[]
+  Post      Post[]
+
+  isBanned Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  isActive  Boolean  @default(true)
+  isDeleted Boolean  @default(false)
+}
+
+model Post {
+  id          String  @id @default(uuid())
+  title       String
+  thumbnail   String?
+  slug        String  @unique
+  content     String
+  contentJson Json?
+
+  authorId String
+  author   User      @relation(fields: [authorId], references: [id])
+  comments Comment[]
+
+  approvalStatus ApprovalStatus @default(Pending)
+  postStatus     PostStatus     @default(Draft)
+  publishedAt    DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  isActive  Boolean  @default(true)
+  isDeleted Boolean  @default(false)
+}
+
+model Comment {
+  id          String @id @default(uuid())
+  postId      String
+  post        Post   @relation(fields: [postId], references: [id])
+  userId      String
+  user        User   @relation(fields: [userId], references: [id])
+  content     String
+  contentJson Json?
+
+  parentId String?
+  parent   Comment? @relation("CommentReplies", fields: [parentId], references: [id])
+
+  replies   Comment[]  @relation("CommentReplies")
+  reactions Reaction[]
+
+  likesCount    Int @default(0)
+  dislikesCount Int @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  isActive  Boolean  @default(true)
+  isDeleted Boolean  @default(false)
+}
+
+model Reaction {
+  id   String       @id @default(uuid())
+  type ReactionType
+
+  userId    String
+  commentId String
+
+  user    User    @relation(fields: [userId], references: [id])
+  comment Comment @relation(fields: [commentId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  isActive  Boolean  @default(true)
+  isDeleted Boolean  @default(false)
+
+  @@unique([userId, commentId]) //* One reaction per user per comment
+}
+
+enum ReactionType {
+  Like
+  Dislike
+}
+
+enum UserRole {
+  User
+  Moderator
+  Admin
+}
+
+enum ApprovalStatus {
+  Pending
+  Approved
+  Rejected
+}
+
+enum PostStatus {
+  Draft
+  Published
+  Archived
+}
