@@ -1,7 +1,8 @@
 import cors from "cors";
-import express from "express";
+import express, { NextFunction, Request, Response } from "express";
 import httpStatus from "http-status";
 import globalErrorHandler from "./middlewares/global-error-handler";
+import responseData from "./utils/shared/response";
 
 const app = express();
 
@@ -18,5 +19,17 @@ app.get("/", (req, res) => {
 
 //* Global Error Handler
 app.use(globalErrorHandler);
+
+//* Not Found Route Handler
+app.use((req: Request, res: Response, next: NextFunction) => {
+  return responseData(
+    {
+      statusCode: httpStatus.NOT_FOUND,
+      status: false,
+      message: "API end-point not found",
+    },
+    res
+  );
+});
 
 export default app;
