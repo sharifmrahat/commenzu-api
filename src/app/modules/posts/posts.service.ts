@@ -148,6 +148,14 @@ const findAllPublishedPost = async (
     where: { ...whereCondition, isDeleted: false, postStatus: "Published" },
     skip,
     take: limit,
+    include: {
+      author: {
+        select: {
+          id: true,
+          name: true,
+        },
+      },
+    },
     orderBy:
       sortBy && sortOrder
         ? { [sortBy]: sortOrder }

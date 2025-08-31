@@ -23,7 +23,8 @@ const login = catchAsync(async (req, res) => {
   return responseData(
     {
       message: "User logged in successfully!",
-      token: result,
+      token: result.accessToken,
+      result: result.user,
     },
     res
   );

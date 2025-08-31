@@ -25,7 +25,10 @@ const login = async (payload: { email: string; password: string }) => {
     role: userExist?.role,
   });
 
-  return accessToken;
+  return {
+    accessToken,
+    user: userExist,
+  };
 };
 
 const signUp = async (payload: User) => {

@@ -6,7 +6,13 @@ import { AppRouter } from "./routes";
 
 const app = express();
 
-app.use(cors());
+app.use(
+  cors({
+    origin: "http://localhost:3000", // Vite default port, change if different
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
+    credentials: true, // allow cookies if using them
+  })
+);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
