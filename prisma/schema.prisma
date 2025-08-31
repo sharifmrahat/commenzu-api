@@ -22,7 +22,7 @@ model User {
   role     UserRole @default(User)
 
   imageId  String?
-  ImageUrl String?
+  imageUrl String?
 
   comments  Comment[]
   reactions Reaction[]

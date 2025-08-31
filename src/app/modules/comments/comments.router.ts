@@ -20,18 +20,6 @@ router
   );
 
 router
-  .route("/:id")
-  .post(
-    validateRole(UserRole.Admin, UserRole.Moderator, UserRole.User),
-    validateRequest(CommentValidation.updateCommentZodSchema),
-    CommentController.editComment
-  )
-  .delete(
-    validateRole(UserRole.Admin, UserRole.Moderator, UserRole.User),
-    CommentController.deleteComment
-  );
-
-router
   .route("/reply")
   .post(
     validateRole(UserRole.User, UserRole.Moderator, UserRole.Admin),
@@ -45,6 +33,18 @@ router
     validateRole(UserRole.User, UserRole.Moderator, UserRole.Admin),
     validateRequest(CommentValidation.upsertReactionZodSchema),
     CommentController.upsertReaction
+  );
+
+router
+  .route("/:id")
+  .post(
+    validateRole(UserRole.Admin, UserRole.Moderator, UserRole.User),
+    validateRequest(CommentValidation.updateCommentZodSchema),
+    CommentController.editComment
+  )
+  .delete(
+    validateRole(UserRole.Admin, UserRole.Moderator, UserRole.User),
+    CommentController.deleteComment
   );
 
 export const CommentRouter = router;

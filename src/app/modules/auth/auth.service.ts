@@ -18,10 +18,7 @@ const login = async (payload: { email: string; password: string }) => {
     userExist?.password &&
     !(await bcrypt.compare(payload.password, userExist?.password))
   )
-    throw new ApiError(
-      httpStatus.BAD_REQUEST,
-      "Email or Password not matched!"
-    );
+    throw new ApiError(httpStatus.BAD_REQUEST, "Wrong credentials!");
 
   const accessToken = JwtHelpers.generateToken({
     userId: userExist?.id,
@@ -32,6 +29,18 @@ const login = async (payload: { email: string; password: string }) => {
 };
 
 const signUp = async (payload: User) => {
+  const userExist = await prismaClient.user.findUnique({
+    where: {
+      email: payload.email,
+    },
+  });
+
+  if (userExist)
+    throw new ApiError(
+      httpStatus.CONFLICT,
+      "User already exist using same email!"
+    );
+
   const password = payload.password;
 
   payload.password = await bcrypt.hash(password, config.BCRYPT_SALT_ROUNDS);

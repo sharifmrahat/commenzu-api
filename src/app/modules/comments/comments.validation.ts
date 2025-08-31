@@ -3,14 +3,14 @@ import { z } from "zod";
 
 const createCommentZodSchema = z.object({
   body: z.object({
-    posId: z.string(),
+    postId: z.string(),
     content: z.string(),
   }),
 });
 
 const createReplyZodSchema = z.object({
   body: z.object({
-    posId: z.string(),
+    postId: z.string(),
     commentId: z.string(),
     content: z.string(),
   }),
@@ -18,8 +18,6 @@ const createReplyZodSchema = z.object({
 
 const updateCommentZodSchema = z.object({
   body: z.object({
-    posId: z.string(),
-    commentId: z.string(),
     content: z.string(),
   }),
 });

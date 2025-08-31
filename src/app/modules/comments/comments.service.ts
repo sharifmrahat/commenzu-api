@@ -181,7 +181,7 @@ const findAllComments = async (
     andCondition.length > 0 ? { AND: andCondition } : {};
 
   const comments = await prismaClient.comment.findMany({
-    where: { ...whereCondition, isDeleted: false },
+    where: { ...whereCondition, isDeleted: false, parentId: null },
     skip,
     take: limit,
     orderBy:
@@ -190,10 +190,35 @@ const findAllComments = async (
         : {
             createdAt: "desc",
           },
+    include: {
+      user: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          role: true,
+        },
+      },
+      reactions: {
+        include: {
+          user: {
+            select: { id: true, name: true },
+          },
+        },
+      },
+      replies: {
+        where: { isDeleted: false },
+        orderBy: { createdAt: "asc" },
+        include: {
+          user: { select: { id: true, name: true } },
+          reactions: true,
+        },
+      },
+    },
   });
 
   const count = await prismaClient.comment.count({
-    where: { ...whereCondition, isDeleted: false },
+    where: { ...whereCondition, isDeleted: false, parentId: null },
   });
 
   return {

@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import httpStatus from "http-status";
 import { ApiError, JwtHelpers } from "../../utils";
 import { IValidateUser } from "../modules/auth/auth.interface";
-import { UserRole } from "../../generated/prisma";
+import { UserRole } from "@prisma/client";
 
 //* To Extend Express Request interface to include 'user'
 declare global {
@@ -18,11 +18,11 @@ export const validateRole = (...roles: UserRole[]) => {
     try {
       const { authorization } = req.headers;
 
-      if (!authorization) {
-        next("Invalid token!");
+      if (!authorization || !authorization.startsWith("Bearer ")) {
+        return next("Invalid token!");
       }
 
-      let token = authorization as string;
+      const token = authorization.split(" ")[1];
 
       const user = JwtHelpers.verifyToken(token) as IValidateUser;
 
