@@ -4,3 +4,4 @@ export * from "./jwt-helpers";
 export * from "./catch-async";
 export * from "./pagination-helper";
 export * from "./pick";
+export * from "./generate-random-id";

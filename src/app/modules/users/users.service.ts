@@ -4,14 +4,6 @@ import { Prisma, User } from "@prisma/client";
 import { IPaginationOption } from "../../../interfaces/pagination";
 import { UserFilterOption } from "./users.interface";
 
-const insertUser = async (payload: User): Promise<User> => {
-  const createdUser = await prismaClient.user.create({
-    data: payload,
-  });
-
-  return createdUser;
-};
-
 const updateUser = async (
   id: string,
   payload: User
@@ -130,7 +122,6 @@ const findAllUsers = async (
 };
 
 export const UserService = {
-  insertUser,
   updateUser,
   deleteUser,
   findOneUser,

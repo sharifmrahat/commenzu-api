@@ -1,14 +1,6 @@
 import { catchAsync, pick, responseData } from "../../../utils";
 import { UserService } from "./users.service";
 
-const insertUser = catchAsync(async (req, res) => {
-  const user = req.body;
-
-  const result = await UserService.insertUser(user);
-
-  return responseData({ message: "User added successfully", result }, res);
-});
-
 const updateUser = catchAsync(async (req, res) => {
   const id = req.params.id;
   const data = req.body;
@@ -73,7 +65,6 @@ const findAllUsers = catchAsync(async (req, res) => {
 });
 
 export const UserController = {
-  insertUser,
   updateUser,
   deleteUser,
   findOneUser,
