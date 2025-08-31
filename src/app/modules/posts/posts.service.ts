@@ -157,7 +157,7 @@ const findAllPublishedPost = async (
   });
 
   const count = await prismaClient.post.count({
-    where: whereCondition,
+    where: { ...whereCondition, isDeleted: false, postStatus: "Published" },
   });
 
   return {

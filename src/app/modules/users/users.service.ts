@@ -95,7 +95,7 @@ const findAllUsers = async (
     andCondition.length > 0 ? { AND: andCondition } : {};
 
   const users = await prismaClient.user.findMany({
-    where: whereCondition,
+    where: { ...whereCondition, isDeleted: false },
     skip,
     take: limit,
     orderBy:
@@ -107,7 +107,7 @@ const findAllUsers = async (
   });
 
   const count = await prismaClient.user.count({
-    where: whereCondition,
+    where: { ...whereCondition, isDeleted: false },
   });
 
   return {
