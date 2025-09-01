@@ -4,6 +4,8 @@ A post and comment system with nested replies, reactions (like/dislike), and JWT
 
 ## 🔗 Important Links
 
+- Frontend Repository: https://github.com/sharifmrahat/commenzu-fe
+- Backend Repository: https://github.com/sharifmrahat/commenzu-api
 - API Documentation: https://documenter.getpostman.com/view/21772045/2sB3HhsMxT
 
 ## 🛠️ Setup Instructions
@@ -79,11 +81,12 @@ App Url: `http://localhost:5000/api/v1`
 
 ## ✨ Features
 
-- 📝 Create and manage posts
-- 💬 Nested comments and threaded replies
-- 👍👎 Like/Dislike reactions (1 reaction per user per comment)
-- 📊 Auto-updated like/dislike counts
-- 🔐 Secure APIs with JWT Bearer token authentication
+- Create and manage posts
+- Nested comments and threaded replies
+- Like/Dislike reactions (1 reaction per user per comment)
+- Auto-updated like/dislike counts
+- Secure APIs with JWT Bearer token authentication
+- Real time streaming with Web Socket
 
 ## 🚀 Technology Used
 
@@ -92,11 +95,14 @@ App Url: `http://localhost:5000/api/v1`
 - PostgreSQL – Database
 - TypeScript – Strong typing
 - JWT – Authentication
-- Supabase – For DB Hosting
+- Socket – Real time streaming
+- Supabase – For Hosting Database
 
 ## 🔮 Areas of Enhancement
 
-- 🏷️ Support hashtags and mentions in posts
-- 🔔 Implement notifications for replies & reactions
-- 📱 Build a user role based dashboard
-- 📈 Add analytics (most liked, most commented posts)
+- Support hashtags and mentions in posts
+- Implement notifications for replies & reactions
+- Build a user role based dashboard
+- Add analytics (most liked, most commented posts)
+- Add text-to-speech and voice search
+- Implement AI powered summary
