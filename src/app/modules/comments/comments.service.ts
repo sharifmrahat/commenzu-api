@@ -3,11 +3,13 @@ import { ApiError, paginationHelper, prismaClient } from "../../../utils";
 import { Prisma, ReactionType } from "@prisma/client";
 import { CommentFilterOption } from "./comments.interface";
 import { IPaginationOption } from "../../../interfaces/pagination";
+import type { Server } from "socket.io";
 
 const insertComment = async (
   postId: string,
   userId: string,
-  content: string
+  content: string,
+  io?: Server
 ) => {
   const data = {
     postId,
@@ -15,10 +17,27 @@ const insertComment = async (
     content,
     contentJson: "",
   };
-  //TODO: Add rate limiting
+
   const createdComment = await prismaClient.comment.create({
-    data: data,
+    data,
+    include: {
+      user: { select: { id: true, name: true, email: true, role: true } },
+      reactions: { include: { user: { select: { id: true, name: true } } } },
+      replies: {
+        where: { isDeleted: false },
+        orderBy: { createdAt: "asc" },
+        include: {
+          user: { select: { id: true, name: true } },
+          reactions: true,
+        },
+      },
+    },
   });
+
+  if (io) {
+    const nsp = io.of("/api/v1");
+    nsp.emit("newComment", createdComment);
+  }
 
   return createdComment;
 };
@@ -47,6 +66,31 @@ const insertReply = async (
   };
   const createdReply = await prismaClient.comment.create({
     data: data,
+    include: {
+      user: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          role: true,
+        },
+      },
+      reactions: {
+        include: {
+          user: {
+            select: { id: true, name: true },
+          },
+        },
+      },
+      replies: {
+        where: { isDeleted: false },
+        orderBy: { createdAt: "asc" },
+        include: {
+          user: { select: { id: true, name: true } },
+          reactions: true,
+        },
+      },
+    },
   });
 
   return createdReply;
@@ -64,6 +108,31 @@ const editComment = async (id: string, userId: string, content: string) => {
   const createdComment = await prismaClient.comment.update({
     where: { id, userId },
     data: { content },
+    include: {
+      user: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          role: true,
+        },
+      },
+      reactions: {
+        include: {
+          user: {
+            select: { id: true, name: true },
+          },
+        },
+      },
+      replies: {
+        where: { isDeleted: false },
+        orderBy: { createdAt: "asc" },
+        include: {
+          user: { select: { id: true, name: true } },
+          reactions: true,
+        },
+      },
+    },
   });
 
   return createdComment;
@@ -78,12 +147,37 @@ const deleteComment = async (id: string, userId: string) => {
     throw new ApiError(httpStatus.NOT_FOUND, "Comment not exists");
   }
 
-  const createdComment = await prismaClient.comment.update({
+  const deletedComment = await prismaClient.comment.update({
     where: { id, userId },
     data: { isDeleted: true },
+    include: {
+      user: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          role: true,
+        },
+      },
+      reactions: {
+        include: {
+          user: {
+            select: { id: true, name: true },
+          },
+        },
+      },
+      replies: {
+        where: { isDeleted: false },
+        orderBy: { createdAt: "asc" },
+        include: {
+          user: { select: { id: true, name: true } },
+          reactions: true,
+        },
+      },
+    },
   });
 
-  return createdComment;
+  return deletedComment;
 };
 
 const upsertReaction = async (
@@ -91,7 +185,7 @@ const upsertReaction = async (
   userId: string,
   reactionType: ReactionType
 ) => {
-  return await prismaClient.$transaction(async (tx) => {
+  const updatedComment = await prismaClient.$transaction(async (tx) => {
     const existingReaction = await tx.reaction.findFirst({
       where: { commentId, userId, isDeleted: false },
     });
@@ -135,16 +229,43 @@ const upsertReaction = async (
 
     return await tx.comment.update({
       where: { id: commentId },
-      data: {
-        likesCount: {
-          increment: reactionType === "Like" ? 1 : -1,
+      data:
+        reactionType === "Like"
+          ? {
+              likesCount: { increment: 1 },
+              dislikesCount: { decrement: 1 },
+            }
+          : {
+              dislikesCount: { increment: 1 },
+              likesCount: { decrement: 1 },
+            },
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            role: true,
+          },
         },
-        dislikesCount: {
-          increment: reactionType === "Dislike" ? 1 : -1,
+        reactions: {
+          include: {
+            user: { select: { id: true, name: true } },
+          },
+        },
+        replies: {
+          where: { isDeleted: false },
+          orderBy: { createdAt: "asc" },
+          include: {
+            user: { select: { id: true, name: true } },
+            reactions: true,
+          },
         },
       },
     });
   });
+
+  return updatedComment;
 };
 
 const findAllComments = async (
@@ -221,7 +342,7 @@ const findAllComments = async (
     where: { ...whereCondition, isDeleted: false, parentId: null },
   });
 
-  return {
+  const response = {
     meta: {
       page,
       size: limit,
@@ -230,6 +351,8 @@ const findAllComments = async (
     },
     data: comments,
   };
+
+  return response;
 };
 
 export const CommentService = {

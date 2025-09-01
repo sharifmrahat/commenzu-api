@@ -6,8 +6,14 @@ const insertComment = catchAsync(async (req, res) => {
   const postId = req.body.postId;
   const userId = req.user?.userId as string;
   const content = req.body.content;
+  const io = req.app.get("io");
 
-  const result = await CommentService.insertComment(postId, userId, content);
+  const result = await CommentService.insertComment(
+    postId,
+    userId,
+    content,
+    io
+  );
 
   return responseData(
     { message: "Comment inserted successfully", result },
@@ -69,6 +75,7 @@ const upsertReaction = catchAsync(async (req, res) => {
 
 const findAllComments = catchAsync(async (req, res) => {
   const query = req.query;
+
   const paginationOptions = pick(query, [
     "page",
     "size",
