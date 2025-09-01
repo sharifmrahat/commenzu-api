@@ -1,6 +1,6 @@
 # CommenZu | API
 
-A post and comment system with nested replies, reactions (like/dislike), and JWT-based authentication.
+A post and comment system with nested replies, reactions (like/dislike), and real time streaming.
 
 ## 🔗 Important Links
 
@@ -14,7 +14,7 @@ A post and comment system with nested replies, reactions (like/dislike), and JWT
 
 ```bash
 git clone https://github.com/sharifmrahat/commenzu-api.git
-cd commenzu-apis
+cd commenzu-api
 ```
 
 #### Step-2: Install dependencies
